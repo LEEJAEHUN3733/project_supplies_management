@@ -8,15 +8,15 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateCategoryDto } from './dtos/create-category.dto';
-import { UpdateCategoryDto } from './dtos/update-category.dto';
-import { AppService } from './app.service';
-import { Category } from './entities/category.entity';
+import { CreateCategoryDto } from '../dtos/create-category.dto';
+import { UpdateCategoryDto } from '../dtos/update-category.dto';
+import { CategoryService } from '../services/category.service';
+import { Category } from '../entities/category.entity';
 
 @ApiTags('카테고리 관리 API')
 @Controller('category')
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class CategoryController {
+  constructor(private readonly categoryService: CategoryService) {}
 
   // 카테고리 등록
   @Post()
@@ -32,7 +32,7 @@ export class AppController {
   async createCategory(
     @Body() createCategoryDto: CreateCategoryDto,
   ): Promise<Category> {
-    return this.appService.createCategory(createCategoryDto);
+    return this.categoryService.createCategory(createCategoryDto);
   }
   // 전체 카테고리 목록 조회
   @Get()
@@ -46,7 +46,7 @@ export class AppController {
     type: [Category],
   })
   async getCategories(): Promise<Category[]> {
-    return this.appService.getCategories();
+    return this.categoryService.getCategories();
   }
   // 카테고리 갱신
   @Patch(':id')
@@ -67,7 +67,7 @@ export class AppController {
     @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
-    return this.appService.updateCategory(id, updateCategoryDto);
+    return this.categoryService.updateCategory(id, updateCategoryDto);
   }
   // 카테고리 삭제
   @Delete(':id')
@@ -84,6 +84,6 @@ export class AppController {
     description: '카테고리를 찾을 수 없습니다.',
   })
   async deleteCategory(@Param('id') id: number): Promise<void> {
-    return this.appService.deleteCategory(id);
+    return this.categoryService.deleteCategory(id);
   }
 }

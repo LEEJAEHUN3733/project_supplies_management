@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Category } from './entities/category.entity';
-import { AppController } from './app.controller';
+import { Category } from '../entities/category.entity';
+import { CategoryModule } from './category.module';
+import { AppController } from 'src/controllers/app.controller';
+import { AppService } from 'src/services/app.service';
 
 @Module({
   imports: [
@@ -12,11 +13,11 @@ import { AppController } from './app.controller';
       port: 5432,
       username: 'postgres',
       password: '0522',
-      database: 'category',
+      database: 'supplies_management',
       entities: [Category],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Category]),
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
