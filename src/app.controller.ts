@@ -1,15 +1,24 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { AppService } from './app.service';
 import { Category } from './entities/category.entity';
 
-@ApiTags('Category')
+@ApiTags('카테고리 관리 API')
 @Controller('category')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  // 카테고리 등록
   @Post()
   @ApiOperation({
     summary: '새 카테고리 등록',
@@ -18,10 +27,14 @@ export class AppController {
   @ApiResponse({
     status: 201,
     description: '카테고리가 정상적으로 등록되었습니다.',
+    type: Category,
   })
-  // createCategory(@Body() createCategoryDto: CreateCategoryDto): any {
-  //   return this.appService.getHello;
-  // }
+  async createCategory(
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<Category> {
+    return this.appService.createCategory(createCategoryDto);
+  }
+  // 전체 카테고리 목록 조회
   @Get()
   @ApiOperation({
     summary: '전체 카테고리 목록 조회',
@@ -32,7 +45,45 @@ export class AppController {
     description: '카테고리 리스트 반환',
     type: [Category],
   })
-  getHello(): string {
-    return this.appService.getHello();
+  async getCategories(): Promise<Category[]> {
+    return this.appService.getCategories();
+  }
+  // 카테고리 갱신
+  @Patch(':id')
+  @ApiOperation({
+    summary: '카테고리 갱신',
+    description: '카테고리 정보를 갱신합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '카테고리가 성공적으로 수정되었습니다.',
+    type: Category,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '카테고리를 찾을 수 없습니다.',
+  })
+  async updateCategory(
+    @Param('id') id: number,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
+    return this.appService.updateCategory(id, updateCategoryDto);
+  }
+  // 카테고리 삭제
+  @Delete(':id')
+  @ApiOperation({
+    summary: '카테고리 삭제',
+    description: '카테고리를 삭제합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '카테고리가 성공적으로 삭제되었습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '카테고리를 찾을 수 없습니다.',
+  })
+  async deleteCategory(@Param('id') id: number): Promise<void> {
+    return this.appService.deleteCategory(id);
   }
 }
