@@ -4,6 +4,8 @@ import { Category } from '../entities/category.entity';
 import { CategoryModule } from './category.module';
 import { AppController } from 'src/controllers/app.controller';
 import { AppService } from 'src/services/app.service';
+import { RedisModule } from 'nestjs-redis';
+import { ItemModule } from './item.module';
 
 @Module({
   imports: [
@@ -18,6 +20,14 @@ import { AppService } from 'src/services/app.service';
       synchronize: true,
     }),
     CategoryModule,
+
+    // Redis모듈 설정
+    RedisModule.register({
+      host: 'localhost',
+      port: 6379,
+      db: 0,
+    }),
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

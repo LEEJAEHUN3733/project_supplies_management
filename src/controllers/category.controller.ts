@@ -8,8 +8,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { UpdateCategoryDto } from '../dtos/update-category.dto';
+import { CreateCategoryDto } from '../dtos/category/create-category.dto';
+import { UpdateCategoryDto } from '../dtos/category/update-category.dto';
 import { CategoryService } from '../services/category.service';
 import { Category } from '../entities/category.entity';
 
