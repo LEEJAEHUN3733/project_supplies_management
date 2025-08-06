@@ -1,50 +1,57 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RedisService } from 'nestjs-redis';
-import { Item } from 'src/entities/item.entity';
-import { Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ItemCacheService {
-  private readonly cacheKey = 'items_cached';
-  private readonly cacheExpiration = 3600;
+export class RedisService {
+  // Redis 클라이언트를 주입받아 사용
+  constructor(@Inject(RedisService.injection) private readonly client: any) {}
 
-  constructor(
-    @InjectRepository(Item)
-    private itemRepository: Repository<Item>,
-    private readonly redisService: RedisService,
-  ) {}
-
-  // Redis 클라이언트 가져오기
-  private get redis() {
-    return this.redisService.getClient();
+  // Redis 클라이언트 주입에 사용되는 고유 키
+  static get injection() {
+    return 'redis.legacy.injection' as const;
   }
 
-  // 캐시된 데이터 확인
-  async getCachedItems(): Promise<Item[]> {
-    try {
-      const cachedItems = await this.redis.get(this.cacheKey);
+  // Redis에서 특정 key의 값을 가져오는 메서드
+  async get(key: string): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      this.client.get(key, (err: any, result: string | null) => {
+        if (err)
+          reject(err); // 에러 발생시 reject
+        else resolve(result); // 정상적으로 값 반환
+      });
+    });
+  }
 
-      // 캐시가 존재하면 캐시된 데이터 반환
-      if (cachedItems) {
-        return JSON.parse(cachedItems); // 캐시된 데이터 반환
-      }
+  // Redis에 key와 value를 설정하고, TTL(유효기간)을 지정하는 메서드
+  async set(key: string, value: string, ttlSeconds = 3600): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // TTL을 적용하여 값을 설정
+      this.client.set(key, value, 'EX', ttlSeconds, (err: any) => {
+        if (err)
+          reject(err); // 에러 발생 시 reject
+        else resolve(); // 성공시 resolve
+      });
+    });
+  }
 
-      // 캐시가 없다면 DB에서 가져오고 캐시 저장
-      const items = await this.itemRepository.find();
+  // Redis에서 특정 key를 삭제하는 메서드
+  async del(key: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.del(key, (err: any) => {
+        if (err)
+          reject(err); // 에러 발생 시 reject
+        else resolve(); // 성공 시 resolve
+      });
+    });
+  }
 
-      // 캐시에 데이터 저장(1시간)
-      await this.redis.set(
-        this.cacheKey,
-        JSON.stringify(items),
-        'EX',
-        this.cacheExpiration,
-      );
-      return items;
-    } catch (error) {
-      // Redis나 DB오류 처리
-      console.error('DB나 Redis에서 오류가 발생했습니다', error);
-      throw new Error('데이터 조회 중 문제가 발생했습니다.');
-    }
+  // Redis에서 특정 key가 존재하는지 확인하는 메서드
+  async exists(key: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.client.exists(key, (err: any, reply: number) => {
+        if (err)
+          reject(err); // 에러 발생 시 reject
+        else resolve(reply === 1); // 존재하면 true, 아니면 false 반환
+      });
+    });
   }
 }
