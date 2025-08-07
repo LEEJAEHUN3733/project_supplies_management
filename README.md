@@ -1,99 +1,103 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 비품 관리 시스템 (Supplies Management System)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+이 프로젝트는 NestJS를 사용한 비품 관리 애플리케이션으로, 비품(Item)과 카테고리(Category)를 관리하고, Redis를 이용한 캐시 최적화를 제공합니다. PostgreSQL 데이터베이스와 연동하여 비품 데이터 및 카테고리 데이터를 관리하며, Swagger UI를 통해 API 문서화와 테스트 기능을 제공합니다.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 기술 스택
 
-## Description
+- **NestJS**: 웹 애플리케이션의 기본 구조를 제공하는 Node.js 프레임워크.
+- **PostgreSQL**: 관계형 데이터베이스.
+- **TypeORM**: TypeScript를 지원하는 ORM으로, PostgreSQL과의 데이터 연동을 처리.
+- **Redis**: 오픈 소스 기반의 인 메모리(In-memory) 데이터 저장소, 데이터 조회 성능을 최적화.
+- **Swagger**: API 문서화 및 테스트 UI 제공.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 서버 환경
 
-## Project setup
+- **Redis** 3.1.2
+- **Node.js** 18.20.8
+- **PostgreSQL** 17.5
 
-```bash
-$ npm install
-```
+## 주요 기능
 
-## Compile and run the project
+- 카테고리(Category) CRUD
+- 비품(Item) CRUD
+- Redis 캐시를 사용한 비품 목록 성능 최적화
+- API 문서화 (Swagger를 사용하여 API 문서화 및 테스트)
+- 비품 목록 캐싱 및 만료 설정
 
-```bash
-# development
-$ npm run start
+## DB 테이블 구조 설계서
 
-# watch mode
-$ npm run start:dev
+### Category 테이블
 
-# production mode
-$ npm run start:prod
-```
+| **필드명** | **형태**            | **설명**                                           |
+|------------|---------------------|--------------------------------------------------|
+| `id`       | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리.          |
+| `name`     | `character varying` | 카테고리명.      |
 
-## Run tests
+### Item 테이블
 
-```bash
-# unit tests
-$ npm run test
+| **필드명**  | **형태**               | **설명**                                             |
+|-------------|------------------------|----------------------------------------------------|
+| `id`        | `integer`              | Primary Key. 자동 증가(`nextval`)로 관리.            |
+| `name`      | `character varying`    | 비품명.                                          |
+| `quantity`  | `integer`              | 수량.                                             |
+| `status`    | `item_status_enum`     | 비품 상태(`정상`, `수리중`, `폐기`)      |
+| `createdAt` | `timestamp`            | 비품 등록 시간.                   |
+| `categoryId`| `integer`              | 비품이 속한 카테고리의 `id`를 참조하는 외래 키.      |
 
-# e2e tests
-$ npm run test:e2e
+## 프로젝트 설치
 
-# test coverage
-$ npm run test:cov
-```
+1. **프로젝트 클론**:
 
-## Deployment
+   ```bash
+   git clone https://github.com/LEEJAEHUN3733/supplies-management.git
+   cd supplies-management
+   ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+2. **필수 의존성 설치**:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+   ```bash
+   $ npm install
+   ```
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+3. **환경 설정**:
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+   ```.env``` 파일을 프로젝트 루트에 생성하여 환경 변수들을 설정합니다.
 
-## Resources
+   ``` bash
+   # PostgreSQL 설정
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USERNAME=postgres
+   DB_PASSWORD=yourpassword
+   DB_NAME=category
 
-Check out a few resources that may come in handy when working with NestJS:
+   # Redis 설정
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+   # NestJS 설정 (기타 설정)
+   PORT=3000
+   ```
+   ```DB_HOST```, ```DB_PORT``` 등의 설정을 본인의 환경에 맞게 수정하세요.  
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 프로젝트 실행
 
-## Stay in touch
+   ```bash
+   # 개발 환경에서 프로젝트 실행
+   $ npm run start
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+   # 개발 환경에서 프로젝트 실행(파일 변경 감지)
+   $ npm run start:dev
 
-## License
+   # 프로덕션 환경에서 프로젝트 실행
+   $ npm run start:prod
+   ```
+
+## API 문서화
+
+프로젝트는 Swagger UI를 통해 API 문서화를 제공합니다. Swagger UI는 http://localhost:3000/apidocs 에서 확인할 수 있습니다.
+
+## 라이센스
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
