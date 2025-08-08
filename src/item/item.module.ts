@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ItemController } from 'src/controllers/item.controller';
-import { Item } from 'src/entities/item.entity';
-import { ItemService } from 'src/services/item.service';
-import { ItemCacheService } from 'src/services/item-cache.service';
-import { RedisModule } from './redis.module';
-import { Category } from 'src/entities/category.entity';
+import { ItemController } from 'src/item/item.controller';
+import { Item } from 'src/item/item.entity';
+import { ItemService } from 'src/item/item.service';
+import { ItemCacheService } from 'src/item/item-cache.service';
+import { RedisModule } from '../redis/redis.module';
+import { Category } from 'src/category/category.entity';
 
 @Module({
   // 이 모듈에서 사용할 TypeORM 기능을 설정

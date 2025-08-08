@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RedisService } from './redis.service';
-import { Item } from 'src/entities/item.entity';
+import { RedisService } from '../redis/redis.service';
+import { Item } from 'src/item/item.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class ItemCacheService {
   // 캐시 키와 만료시간 설정
   private readonly cacheKey = 'items_cached';
-  private readonly cacheExpiration = 3600; // 1시간
+  private readonly cacheExpiration = 5; // 5초
 
   constructor(
     @InjectRepository(Item) // Item 엔티티의 리포지토리 주입

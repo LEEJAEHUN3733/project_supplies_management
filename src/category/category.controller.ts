@@ -4,14 +4,15 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateCategoryDto } from '../dtos/category/create-category.dto';
-import { UpdateCategoryDto } from '../dtos/category/update-category.dto';
-import { CategoryService } from '../services/category.service';
-import { Category } from '../entities/category.entity';
+import { CreateCategoryDto } from './dtos/create-category.dto';
+import { UpdateCategoryDto } from './dtos/update-category.dto';
+import { CategoryService } from './category.service';
+import { Category } from './category.entity';
 
 @ApiTags('카테고리 관리 API') // Swagger API 명세서에서 카테고리 관리 API로 그룹화
 @Controller('category')
@@ -27,6 +28,11 @@ export class CategoryController {
   @ApiResponse({
     status: 201, // 요청이 성공적으로 처리된 경우 HTTP 201 응답
     description: '카테고리가 정상적으로 등록되었습니다.',
+    type: Category,
+  })
+  @ApiResponse({
+    status: 400, // 카테고리 중복 HTTP 400 응답
+    description: '이미 존재하는 카테고리명입니다.', // BadRequestException
     type: Category,
   })
   async createCategory(
@@ -62,11 +68,15 @@ export class CategoryController {
     type: Category, // 반환될 데이터 타입(수정된 카테고리)
   })
   @ApiResponse({
+    status: 400, // 카테고리 중복 HTTP 400 응답
+    description: '이미 존재하는 카테고리명입니다.', // BadRequestException
+  })
+  @ApiResponse({
     status: 404, // 요청한 카테고리가 존재하지 않으면 HTTP 404 응답
-    description: '카테고리를 찾을 수 없습니다.',
+    description: '카테고리를 찾을 수 없습니다.', // NotFoundException
   })
   async updateCategory(
-    @Param('id') id: number, // URL 경로에서 카테고리 ID를 가져옴
+    @Param('id', ParseIntPipe) id: number, // URL 경로에서 카테고리 ID를 가져옴
     @Body() updateCategoryDto: UpdateCategoryDto, // HTTP 요청 본문에서 갱신할 카테고리 정보 받음
   ): Promise<Category> {
     return this.categoryService.updateCategory(id, updateCategoryDto); // 서비스에서 카테고리 갱신 처리
@@ -86,7 +96,7 @@ export class CategoryController {
     status: 404, // 요청한 카테고리가 존재하지 않으면 HTTP 404 응답
     description: '카테고리를 찾을 수 없습니다.',
   })
-  async deleteCategory(@Param('id') id: number): Promise<void> {
+  async deleteCategory(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.categoryService.deleteCategory(id); // 서비스에서 카테고리 삭제 처리
   }
 }

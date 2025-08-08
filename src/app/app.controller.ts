@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { AppService } from 'src/services/app.service';
+import { AppService } from 'src/app/app.service';
 
 // localhost:3000/ 에 해당하는 Controller 클래스
 @Controller()

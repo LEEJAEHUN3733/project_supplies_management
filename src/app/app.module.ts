@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Category } from '../entities/category.entity';
-import { CategoryModule } from './category.module';
-import { AppController } from 'src/controllers/app.controller';
-import { AppService } from 'src/services/app.service';
-import { ItemModule } from './item.module';
-import { RedisModule } from './redis.module';
-import { Item } from 'src/entities/item.entity';
+import { Category } from '../category/category.entity';
+import { CategoryModule } from '../category/category.module';
+import { AppController } from 'src/app/app.controller';
+import { AppService } from 'src/app/app.service';
+import { ItemModule } from '../item/item.module';
+import { RedisModule } from '../redis/redis.module';
+import { Item } from 'src/item/item.entity';
 
 @Module({
   imports: [

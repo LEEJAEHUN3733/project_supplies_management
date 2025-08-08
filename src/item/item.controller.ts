@@ -4,16 +4,17 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateItemDto } from 'src/dtos/item/create-item.dto';
-import { UpdateItemDto } from 'src/dtos/item/update-item.dto';
-import { Item } from 'src/entities/item.entity';
-import { ItemCacheService } from 'src/services/item-cache.service';
-import { ItemService } from 'src/services/item.service';
+import { CreateItemDto } from 'src/item/dtos/create-item.dto';
+import { UpdateItemDto } from 'src/item/dtos/update-item.dto';
+import { Item } from 'src/item/item.entity';
+import { ItemCacheService } from 'src/item/item-cache.service';
+import { ItemService } from 'src/item/item.service';
 
 @ApiTags('비품 관리 API') // Swagger API 명세서에서 비품 관리 API로 그룹화
 @Controller('items')
@@ -34,11 +35,18 @@ export class ItemController {
     description: '비품이 성공적으로 등록되었습니다.',
     type: Item, // 반환될 데이터 타입 (새로 등록된 비품)
   })
+  @ApiResponse({
+    status: 400,
+    description: '유효하지 않은 요청 데이터입니다.', // BadRequestException
+  })
+  @ApiResponse({
+    status: 404,
+    description: '카테고리를 찾을 수 없습니다.', // NotFoundException
+  })
   async createItem(@Body() createItemDto: CreateItemDto): Promise<Item> {
-    const newItem = await this.itemService.create(createItemDto); // 서비스에서 비품 등록 처리
-    await this.itemCacheService.refreshCache(); // 캐시 갱신
-    return newItem; // 새로 등록된 비품 반환
+    return await this.itemService.create(createItemDto); // 서비스에서 비품 등록 처리 후 새로 등록된 비품 반환
   }
+
   // 전체 비품 목록 조회
   @Get()
   @ApiOperation({
@@ -65,8 +73,16 @@ export class ItemController {
     description: '특정 카테고리에 속한 비품 목록을 반환합니다.',
     type: [Item], // 반환될 데이터 타입 (특정 카테고리 비품 목록)
   })
+  @ApiResponse({
+    status: 400,
+    description: '유효하지 않은 카테고리 ID입니다.', // BadRequestException
+  })
+  @ApiResponse({
+    status: 404,
+    description: '카테고리를 찾을 수 없습니다.', // NotFoundException
+  })
   async getItemByCategory(
-    @Query('categoryId') categoryId: number, // URL 쿼리 파라미터에서 categoryId를 가져옴
+    @Query('categoryId', ParseIntPipe) categoryId: number, // URL 쿼리 파라미터에서 categoryId를 가져옴
   ): Promise<Item[]> {
     return this.itemService.findByCategory(categoryId); // 서비스에서 카테고리로 필터링된 비품 목록 조회
   }
@@ -82,7 +98,11 @@ export class ItemController {
     description: '특정 비품 상세 정보',
     type: Item, // 반환될 데이터 타입 (특정 비품 정보)
   })
-  async getItem(@Param('id') id: number): Promise<Item> {
+  @ApiResponse({
+    status: 404,
+    description: '비품을 찾을 수 없습니다.', // NotFoundException
+  })
+  async getItem(@Param('id', ParseIntPipe) id: number): Promise<Item> {
     return this.itemService.findOne(id); // 서비스에서 특정 비품 조회
   }
 
@@ -97,19 +117,32 @@ export class ItemController {
     description: '비품이 성공적으로 수정되었습니다.',
     type: Item, // 반환될 데이터 타입 (수정된 비품)
   })
+  @ApiResponse({
+    status: 400,
+    description: '유효하지 않은 요청 데이터입니다.', // BadRequestException
+  })
+  @ApiResponse({
+    status: 404,
+    description: '비품을 찾을 수 없습니다.', // NotFoundException
+  })
   async updateItem(
     @Param('id') id: number, // URL 경로에서 비품 ID를 가져옴
-    @Body() UpdateItemDto: UpdateItemDto, // HTTP 요청 본문에서 수정할 비품 정보를 받음
+    @Body() updateItemDto: UpdateItemDto, // HTTP 요청 본문에서 수정할 비품 정보를 받음
   ): Promise<Item> {
-    const updatedItem = await this.itemService.update(id, UpdateItemDto); // 서비스에서 비품 정보 수정 처리
-    await this.itemCacheService.refreshCache(); // 수정된 후 캐시 갱신
-    return updatedItem; // 수정된 비품 반환
+    return await this.itemService.update(id, updateItemDto); // 서비스에서 비품 정보 수정 처리 후 반환
   }
 
   // 특정 비품 삭제
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: '비품이 성공적으로 삭제되었습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '비품을 찾을 수 없습니다.', // NotFoundException
+  })
   async deleteItem(@Param('id') id: number): Promise<void> {
     await this.itemService.delete(id); // 서비스에서 비품 삭제 처리
-    await this.itemCacheService.refreshCache(); // 캐시 갱신
   }
 }

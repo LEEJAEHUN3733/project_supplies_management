@@ -28,21 +28,21 @@
 
 ### Category 테이블
 
-| **필드명** | **형태**            | **설명**                                           |
-|------------|---------------------|--------------------------------------------------|
-| `id`       | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리.          |
-| `name`     | `character varying` | 카테고리명.      |
+| **필드명** | **형태**            | **설명**                                  |
+| ---------- | ------------------- | ----------------------------------------- |
+| `id`       | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리. |
+| `name`     | `character varying` | 카테고리명.                               |
 
 ### Item 테이블
 
-| **필드명**  | **형태**               | **설명**                                             |
-|-------------|------------------------|----------------------------------------------------|
-| `id`        | `integer`              | Primary Key. 자동 증가(`nextval`)로 관리.            |
-| `name`      | `character varying`    | 비품명.                                          |
-| `quantity`  | `integer`              | 수량.                                             |
-| `status`    | `item_status_enum`     | 비품 상태(`정상`, `수리중`, `폐기`)      |
-| `createdAt` | `timestamp`            | 비품 등록 시간.                   |
-| `categoryId`| `integer`              | 비품이 속한 카테고리의 `id`를 참조하는 외래 키.      |
+| **필드명**   | **형태**            | **설명**                                        |
+| ------------ | ------------------- | ----------------------------------------------- |
+| `id`         | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리.       |
+| `name`       | `character varying` | 비품명.                                         |
+| `quantity`   | `integer`           | 수량.                                           |
+| `status`     | `item_status_enum`  | 비품 상태(`정상`, `수리중`, `폐기`)             |
+| `createdAt`  | `timestamp`         | 비품 등록 시간.                                 |
+| `categoryId` | `integer`           | 비품이 속한 카테고리의 `id`를 참조하는 외래 키. |
 
 ## 프로젝트 설치
 
@@ -61,9 +61,9 @@
 
 3. **환경 설정**:
 
-   ```.env``` 파일을 프로젝트 루트에 생성하여 환경 변수들을 설정합니다.
+   `.env` 파일을 프로젝트 루트에 생성하여 환경 변수들을 설정합니다.
 
-   ``` bash
+   ```bash
    # PostgreSQL 설정
    DB_HOST=localhost
    DB_PORT=5432
@@ -78,21 +78,21 @@
    # NestJS 설정 (기타 설정)
    PORT=3000
    ```
-   ```DB_HOST```, ```DB_PORT``` 등의 설정을 본인의 환경에 맞게 수정하세요.  
 
+   `DB_HOST`, `DB_PORT` 등의 설정을 본인의 환경에 맞게 수정하세요.
 
 ## 프로젝트 실행
 
-   ```bash
-   # 개발 환경에서 프로젝트 실행
-   $ npm run start
+```bash
+# 개발 환경에서 프로젝트 실행
+$ npm run start
 
-   # 개발 환경에서 프로젝트 실행(파일 변경 감지)
-   $ npm run start:dev
+# 개발 환경에서 프로젝트 실행(파일 변경 감지)
+$ npm run start:dev
 
-   # 프로덕션 환경에서 프로젝트 실행
-   $ npm run start:prod
-   ```
+# 프로덕션 환경에서 프로젝트 실행
+$ npm run start:prod
+```
 
 ## API 문서화
 
