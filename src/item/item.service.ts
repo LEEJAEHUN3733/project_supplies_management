@@ -39,6 +39,7 @@ export class ItemService {
       quantity: createItemDto.quantity,
       status: ItemStatus.NORMAL, // 비품의 초기상태 설정(NORMAL)
       categoryId: createItemDto.categoryId,
+      createdByUserId: createItemDto.createdByUserId,
     });
 
     // 비품 저장
@@ -115,5 +116,13 @@ export class ItemService {
 
     // 비품 삭제
     await this.itemRepository.remove(item);
+  }
+
+  // 특정 유저가 등록한 비품 조회
+  async findByUser(userId: number): Promise<Item[]> {
+    return this.itemRepository.find({
+      where: { createdByUserId: userId },
+      order: { createdAt: 'DESC' },
+    });
   }
 }

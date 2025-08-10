@@ -38,7 +38,13 @@ export class CreateItemDto {
 
   @ApiProperty({ example: 1, description: '속한 카테고리 ID' })
   @IsInt({ message: '카테고리 ID는 정수여야 합니다.' }) // 'categoryId'값이 숫자인지 검사
-  @Min(1, { message: '카테고리 ID는 1 이상이어야 합니다.' }) // 'categoryId'값이 0이상인지 검사
+  @Min(1, { message: '카테고리 ID는 1 이상이어야 합니다.' }) // 'categoryId'값이 1이상인지 검사
   @Type(() => Number)
   categoryId: number;
+
+  @ApiProperty({ example: 3, description: '비품 등록한 사용자 ID' })
+  @IsInt({ message: '사용자 ID는 정수여야 합니다.' }) // 'userId' 값이 숫자인지 검사
+  @Min(1, { message: '사용자 ID는 1 이상이어야 합니다.' }) // 'userId' 값이 1이상인지 검사
+  @Type(() => Number)
+  createdByUserId: number;
 }

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-// 비품 상태
+// 비품 상태를 나타내는 상수 객체
 export const ItemStatus = {
   NORMAL: '정상',
   REPAIRING: '수리중',
@@ -39,13 +39,18 @@ export class Item {
   @Column({ type: 'varchar', default: ItemStatus.NORMAL })
   status: ItemStatusType;
 
-  // 비품 생성 날짜
-  @ApiProperty({ example: '1997-05-22T12:00:00Z', description: '생성일' })
-  @CreateDateColumn() // 비품이 생성될 때 자동으로 생성되는 날짜값
-  createdAt: Date;
-
   // 카테고리 ID
   @ApiProperty({ example: 1, description: '전자제품' })
   @Column('int', { name: 'category_id' })
   categoryId: number;
+
+  // 비품 생성 날짜
+  @ApiProperty({ example: '1997-05-22T12:00:00Z', description: '생성일' })
+  @CreateDateColumn({ name: 'created_at' }) // 비품이 생성될 때 자동으로 생성되는 날짜값
+  createdAt: Date;
+
+  // 비품을 등록한 사용자 ID
+  @ApiProperty({ example: 3, description: '비품을 등록한 사용자 ID' })
+  @Column('int', { name: 'created_by_user_id' }) // 'created_by_user_id'로 매핑
+  createdByUserId: number;
 }

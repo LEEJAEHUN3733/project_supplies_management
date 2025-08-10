@@ -1,48 +1,67 @@
 # 비품 관리 시스템 (Supplies Management System)
 
-이 프로젝트는 NestJS를 사용한 비품 관리 애플리케이션으로, 비품(Item)과 카테고리(Category)를 관리하고, Redis를 이용한 캐시 최적화를 제공합니다. PostgreSQL 데이터베이스와 연동하여 비품 데이터 및 카테고리 데이터를 관리하며, Swagger UI를 통해 API 문서화와 테스트 기능을 제공합니다.
+이 프로젝트는 NestJS를 기반으로 구축된 비품 관리 RESTful API 서버입니다. 비품(Item), 카테고리(Category)는 물론, 사용자(User) 및 비품 대여/반납 이력(Rental History)을 관리하는 기능을 제공합니다. PostgreSQL 데이터베이스와 연동하며, Redis를 이용한 캐싱 최적화와 Swagger를 통한 API 문서화를 지원합니다.
 
 ## 기술 스택
 
-- **NestJS**: 웹 애플리케이션의 기본 구조를 제공하는 Node.js 프레임워크.
-- **PostgreSQL**: 관계형 데이터베이스.
-- **TypeORM**: TypeScript를 지원하는 ORM으로, PostgreSQL과의 데이터 연동을 처리.
-- **Redis**: 오픈 소스 기반의 인 메모리(In-memory) 데이터 저장소, 데이터 조회 성능을 최적화.
-- **Swagger**: API 문서화 및 테스트 UI 제공.
+- **BackEnd**: `NestJS`, `TypeScript`
+- **DataBase**: `PostgreSQL`(`TypeORM`)
+- **Caching**: `Redis`
+- **API 문서화**: `Swagger`
 
 ## 서버 환경
 
-- **Redis** 3.1.2
-- **Node.js** 18.20.8
-- **PostgreSQL** 17.5
+- **Redis** 3.0.504
+- **Node.js** 18.x
+- **PostgreSQL** 17.x
 
 ## 주요 기능
 
-- 카테고리(Category) CRUD
-- 비품(Item) CRUD
-- Redis 캐시를 사용한 비품 목록 성능 최적화
-- API 문서화 (Swagger를 사용하여 API 문서화 및 테스트)
-- 비품 목록 캐싱 및 만료 설정
+- 카테고리(Category) 관리: 비품 카테고리 CRUD 기능
+- 비품(Item) 관리: 비품 정보 CRUD, Redis 캐시를 사용한 비품 목록 성능 최적화
+- 사용자(User) 관리: 사용자 정보 CRUD 기능
+- 대여/반납 이력(Rental History) 관리: 비품 대여 및 반납 기록 CRUD
+- 비품 검색: 비품명을 기준으로 검색 및 페이지네이션 처리 마지막 대여 이력 포함
+- 전역 예외 처리: 모든 예외를 일관된 형식으로 처리하는 필터 적용
+- API 문서화: Swagger를 사용하여 API 문서 및 테스트 UI 제공
 
 ## DB 테이블 구조 설계서
 
 ### Category 테이블
 
-| **필드명** | **형태**            | **설명**                                  |
-| ---------- | ------------------- | ----------------------------------------- |
-| `id`       | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리. |
-| `name`     | `character varying` | 카테고리명.                               |
+| **필드명** | **형태**  | **설명**                |
+| ---------- | --------- | ----------------------- |
+| `id`       | `integer` | Primary Key. 자동 증가. |
+| `name`     | `varchar` | 카테고리명.             |
 
 ### Item 테이블
 
-| **필드명**   | **형태**            | **설명**                                        |
-| ------------ | ------------------- | ----------------------------------------------- |
-| `id`         | `integer`           | Primary Key. 자동 증가(`nextval`)로 관리.       |
-| `name`       | `character varying` | 비품명.                                         |
-| `quantity`   | `integer`           | 수량.                                           |
-| `status`     | `item_status_enum`  | 비품 상태(`정상`, `수리중`, `폐기`)             |
-| `createdAt`  | `timestamp`         | 비품 등록 시간.                                 |
-| `categoryId` | `integer`           | 비품이 속한 카테고리의 `id`를 참조하는 외래 키. |
+| **필드명**           | **형태**    | **설명**                            |
+| -------------------- | ----------- | ----------------------------------- |
+| `id`                 | `integer`   | Primary Key. 자동 증가.             |
+| `name`               | `varchar`   | 비품명.                             |
+| `quantity`           | `integer`   | 수량.                               |
+| `status`             | `varchar`   | 비품 상태(`정상`, `수리중`, `폐기`) |
+| `category_id`        | `integer`   | 비품이 속한 카테고리의 `id`         |
+| `created_by_user_id` | `integer`   | 비품을 등록한 사용자의 `id`         |
+| `create_at`          | `timestamp` | 비품 등록 시간.                     |
+
+### User 테이블
+
+| **필드명** | **형태**  | **설명**                |
+| ---------- | --------- | ----------------------- |
+| `id`       | `integer` | Primary Key. 자동 증가. |
+| `name`     | `varchar` | 사용자명.               |
+
+### RentalHistory 테이블
+
+| **필드명**    | **형태**    | **설명**                          |
+| ------------- | ----------- | --------------------------------- |
+| `id`          | `integer`   | Primary Key. 자동 증가.           |
+| `user_id`     | `varchar`   | 대여자(사용자)의 `id`.            |
+| `item_id`     | `integer`   | 대여한 비품의 `id`.               |
+| `rental_date` | `timestamp` | 대여 날짜.                        |
+| `return_date` | `timestamp` | 반납 날짜(`null`일 경우 대여 중). |
 
 ## 프로젝트 설치
 

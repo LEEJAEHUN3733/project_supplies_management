@@ -87,6 +87,20 @@ export class ItemController {
     return this.itemService.findByCategory(categoryId); // 서비스에서 카테고리로 필터링된 비품 목록 조회
   }
 
+  // 특정 유저가 등록한 비품 조회
+  @Get('created_by/:userId')
+  @ApiOperation({ summary: '특정 유저가 등록한 비품 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '특정 유저가 등록한 비품 목록 반환',
+    type: [Item],
+  })
+  async getItemsByUser(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<Item[]> {
+    return this.itemService.findByUser(userId);
+  }
+
   // 특정 비품 상세 정보 조회
   @Get(':id')
   @ApiOperation({
