@@ -17,7 +17,7 @@
 
 ## 주요 기능
 
-- 카테고리(Category) 관리: 비품 카테고리 CRUD 기능
+- 카테고리(Category) 관리: [비품 카테고리 CRUD 기능](doc\category.md)
 - 비품(Item) 관리: 비품 정보 CRUD, Redis 캐시를 사용한 비품 목록 성능 최적화
 - 사용자(User) 관리: 사용자 정보 CRUD 기능
 - 대여/반납 이력(Rental History) 관리: 비품 대여 및 반납 기록 CRUD

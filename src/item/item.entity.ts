@@ -3,6 +3,7 @@ import {
   Check,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,7 +18,9 @@ export const ItemStatus = {
 export type ItemStatusType = (typeof ItemStatus)[keyof typeof ItemStatus];
 
 @Entity() // TypeORM 엔티티로 지정
-@Check(`"quantity" >=0`) // 비품의 수량은 0이상
+@Check(`"total_quantity" >=0`) // 비품의 총 수량은 0이상
+@Check(`"current_quantity" >=0`) // 비품의 현재 수량은 0이상
+@Check(`"total_quantity" >= "current_quantity"`) // 현재수량은 총 수량을 초과할 수 없음.
 export class Item {
   // 비품 ID(Primary Key)
   @ApiProperty({ example: 1, description: '비품 ID' })
@@ -29,10 +32,15 @@ export class Item {
   @Column() // 'name' 필드로 매핑
   name: string;
 
-  // 비품의 수량
-  @ApiProperty({ example: 10, description: '수량' })
-  @Column('int') // 'int'타입으로 매핑
-  quantity: number;
+  // 비품의 총 보유 수량
+  @ApiProperty({ example: 10, description: '총 보유 수량' })
+  @Column('int', { name: 'total_quantity' }) // 'int'타입으로 매핑
+  totalQuantity: number;
+
+  // 비품의 현재 수량
+  @ApiProperty({ example: 85, description: '현재 대여 가능한 수량' })
+  @Column('int', { name: 'current_quantity' })
+  currentQuantity: number;
 
   // 비품 상태
   @ApiProperty({ example: '정상', description: '비품 상태' })
@@ -53,4 +61,8 @@ export class Item {
   @ApiProperty({ example: 3, description: '비품을 등록한 사용자 ID' })
   @Column('int', { name: 'created_by_user_id' }) // 'created_by_user_id'로 매핑
   createdByUserId: number;
+
+  // 소프트 삭제
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

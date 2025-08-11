@@ -93,6 +93,10 @@ export class CategoryController {
     description: '카테고리가 성공적으로 삭제되었습니다.',
   })
   @ApiResponse({
+    status: 400, // 요청한 카테고리에 속한 item이 DB내 존재할때 HTTP 400 응답
+    description: '해당 카테고리에 속한 비품이 있어 삭제할 수 없습니다.',
+  })
+  @ApiResponse({
     status: 404, // 요청한 카테고리가 존재하지 않으면 HTTP 404 응답
     description: '카테고리를 찾을 수 없습니다.',
   })

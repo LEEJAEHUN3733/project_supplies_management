@@ -15,6 +15,10 @@ export class RentalHistory {
   @Column('int', { name: 'item_id' })
   itemId: number;
 
+  @ApiProperty({ example: 5, description: '대여 수량' })
+  @Column('int')
+  quantity: number;
+
   @ApiProperty({ example: '1997-05-22T12:34:56Z', description: '대여날짜' })
   @Column({ name: 'rental_date' })
   rentalDate: Date;

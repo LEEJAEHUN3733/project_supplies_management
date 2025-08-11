@@ -10,6 +10,8 @@ import { Item, ItemStatus } from 'src/item/item.entity';
 import { Repository } from 'typeorm';
 import { ItemCacheService } from './item-cache.service';
 import { Category } from 'src/category/category.entity';
+import { User } from 'src/user/user.entity';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class ItemService {
@@ -17,13 +19,27 @@ export class ItemService {
     @InjectRepository(Item) // Item 엔티티에 대한 리포지토리 주입
     private itemRepository: Repository<Item>, // 비품 리포지토리
 
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     @InjectRepository(Category) // Category 엔티티에 대한 리포지토리 주입
     private categoryRepository: Repository<Category>, // 카테고리 리포지토리
     private itemCacheService: ItemCacheService, // ItemCacheService 주입
+    private readonly redisService: RedisService, // RedisService 주입
   ) {}
 
   // 새 비품 등록
   async create(createItemDto: CreateItemDto): Promise<Item> {
+    // 유저 조회
+    const user = await this.userRepository.findOne({
+      where: { id: createItemDto.createdByUserId },
+    });
+    if (!user) {
+      throw new NotFoundException(
+        '비품을 등록하려는 사용자를 찾을 수 없습니다.',
+      );
+    }
+
     // 카테고리 조회
     const categoryCheck = await this.categoryRepository.findOne({
       where: { id: createItemDto.categoryId },
@@ -36,14 +52,33 @@ export class ItemService {
     // 비품 엔티티 생성 및 초기화
     const item = this.itemRepository.create({
       name: createItemDto.name,
-      quantity: createItemDto.quantity,
+      totalQuantity: createItemDto.quantity, // DTO의 quantity를 총수량으로
+      currentQuantity: createItemDto.quantity, // 현재 수량도 총수량과 동일하게 처리
       status: ItemStatus.NORMAL, // 비품의 초기상태 설정(NORMAL)
       categoryId: createItemDto.categoryId,
       createdByUserId: createItemDto.createdByUserId,
     });
 
     // 비품 저장
-    return await this.itemRepository.save(item);
+    const savedItem = await this.itemRepository.save(item);
+
+    // Redis Pub/Sub를 사용하여 이벤트 발행
+    const eventPayload = {
+      id: savedItem.id,
+      name: savedItem.name,
+    };
+    this.redisService
+      .publish('item_created', JSON.stringify(eventPayload))
+      .then(() => {
+        console.log(
+          `이벤트 발행 성공: item_created, 페이로드: ${JSON.stringify(eventPayload)}`,
+        );
+      })
+      .catch((err) => {
+        console.error(`이벤트 발행 실패: ${err}`);
+      });
+
+    return savedItem;
   }
 
   // 전체 비품 목록 조회
@@ -96,7 +131,25 @@ export class ItemService {
       }
     }
 
-    // 비품 정보 수정 반영
+    // 비품 수량 수정
+    if (updateItemDto.totalQuantity != null) {
+      // 총 수량의 변화량 계산
+      // ex) 100개 -> 120개 변경 시 difference = +20
+      const quantityDifference =
+        updateItemDto.totalQuantity - item.totalQuantity;
+
+      // 현재 수량에도 동일한 변화량 적용
+      item.currentQuantity += quantityDifference;
+
+      // 현재 수량이 0보다 작아지는것 방지
+      if (item.currentQuantity < 0) {
+        throw new BadRequestException(
+          '현재 대여된 수량보다 적게 총 재고를 설정할 수 없습니다.',
+        );
+      }
+    }
+
+    // DTO의 다른 필드들을 기존 item 객체에 병합
     Object.assign(item, updateItemDto);
     // 수정된 비품 저장
     return await this.itemRepository.save(item);
@@ -115,7 +168,7 @@ export class ItemService {
     }
 
     // 비품 삭제
-    await this.itemRepository.remove(item);
+    await this.itemRepository.softRemove(item);
   }
 
   // 특정 유저가 등록한 비품 조회

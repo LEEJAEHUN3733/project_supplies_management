@@ -44,6 +44,7 @@ export class UserService {
   // 유저 정보 삭제
   async delete(id: number): Promise<void> {
     const user = await this.findUser(id);
-    await this.userRepository.remove(user);
+    // remove 대신 softRemove를 사용하여 소프트 삭제 수행.
+    await this.userRepository.softRemove(user);
   }
 }

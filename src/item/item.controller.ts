@@ -41,7 +41,7 @@ export class ItemController {
   })
   @ApiResponse({
     status: 404,
-    description: '카테고리를 찾을 수 없습니다.', // NotFoundException
+    description: '유저ID를 찾을 수 없거나 카테고리를 찾을 수 없습니다.', // NotFoundException
   })
   async createItem(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return await this.itemService.create(createItemDto); // 서비스에서 비품 등록 처리 후 새로 등록된 비품 반환

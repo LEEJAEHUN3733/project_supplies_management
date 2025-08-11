@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/item/item.entity';
 import { RentalHistory } from 'src/rental-history/rental-history.entity';
 import { Repository } from 'typeorm';
+import { SearchResultDto } from './dtos/search-result.dto';
 
 @Injectable()
 export class SearchService {
@@ -13,7 +14,7 @@ export class SearchService {
     private readonly rentalHistoryRepository: Repository<RentalHistory>,
   ) {}
 
-  async searchItems(name: string, page: number): Promise<Item[]> {
+  async searchItems(name: string, page: number): Promise<SearchResultDto[]> {
     const pageSize = 5; // 한 페이지에 5개만 조회
 
     // 검색 조건에 맞는 비품(Item)들을 먼저 조회
@@ -30,9 +31,11 @@ export class SearchService {
       items.map(async (item) => {
         const lastRentalHistory = await this.rentalHistoryRepository
           .createQueryBuilder('rental')
+          .leftJoin('user', 'user', 'user.id = rental.userId')
+          .addSelect(['user.id', 'user.name'])
+          .withDeleted()
           .where('rental.itemId = :itemId', { itemId: item.id })
           .orderBy('rental.rentalDate', 'DESC')
-          .limit(1)
           .getOne();
 
         return {
@@ -42,6 +45,6 @@ export class SearchService {
       }),
     );
 
-    return itemsWithHistory as Item[];
+    return itemsWithHistory;
   }
 }

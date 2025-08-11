@@ -12,12 +12,16 @@ export class UpdateItemDto {
   @IsOptional() // 'name' 값은 선택사항
   name?: string;
 
-  @ApiProperty({ example: 10, description: '수량', required: false })
+  @ApiProperty({
+    example: 10,
+    description: '갱신할 총 보유 수량',
+    required: false,
+  })
   @IsInt({ message: '수량은 정수여야 합니다.' }) // 'quantity' 값이 정수인지 검사
   @Min(0, { message: '수량은 0 이상이어야 합니다.' }) // 'quantity' 값이 0 이상인지 검사
   @IsOptional() // 'quantity' 값은 선택사항
   @Type(() => Number)
-  quantity?: number;
+  totalQuantity?: number;
 
   @ApiProperty({
     example: ItemStatus.NORMAL,

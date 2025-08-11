@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
+import { Item } from 'src/item/item.entity';
 
 @Injectable()
 export class CategoryService {
@@ -15,6 +16,8 @@ export class CategoryService {
     // Category 엔티티에 대한 리포지토리를 주입받음
     @InjectRepository(Category) // Category 엔티티를 위한 리포지토리 인스턴스를 주입
     private categoryRepository: Repository<Category>, // Category에 대한 CRUD 작업을 처리하는 리포지토리
+    @InjectRepository(Item)
+    private itemRepository: Repository<Item>,
   ) {}
 
   // 카테고리 등록
@@ -74,6 +77,16 @@ export class CategoryService {
     const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException('카테고리를 찾을 수 없습니다.');
+    }
+
+    // 해당 카테고리에 속한 비품이 있는지 조회
+    const existItem = await this.itemRepository.findOne({
+      where: { categoryId: id },
+    });
+    if (existItem) {
+      throw new BadRequestException(
+        '해당 카테고리에 속한 비품이 있어 삭제할 수 없습니다.',
+      );
     }
 
     // 카테고리를 DB에서 삭제

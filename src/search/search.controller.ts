@@ -2,7 +2,6 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SearchService } from './search.service';
 import { SearchItemDto } from './dtos/search.dto';
-import { Item } from 'src/item/item.entity';
 import { SearchResultDto } from './dtos/search-result.dto';
 
 @ApiTags('검색 API')
@@ -24,7 +23,9 @@ export class SearchController {
     status: 400,
     description: '유효하지 않은 검색어 또는 페이지 번호입니다.',
   })
-  async searchItems(@Query() searchDto: SearchItemDto): Promise<Item[]> {
+  async searchItems(
+    @Query() searchDto: SearchItemDto,
+  ): Promise<SearchResultDto[]> {
     return this.searchService.searchItems(searchDto.name, searchDto.page);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -6,9 +7,10 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RentalHistoryService } from './rental-history.service';
 import { RentalHistory } from './rental-history.entity';
+import { RentalHistoryItemDto } from './rental-history.dto';
 
 @ApiTags('대여/반납 이력 관리 API') // Swagger 문서에서 해당 API 그룹 명시
 @Controller('rental-history')
@@ -18,6 +20,7 @@ export class RentalHistoryController {
   // 비품 대여
   @Post('rent/:userId/:itemId')
   @ApiOperation({ summary: '비품 대여' })
+  @ApiBody({ type: RentalHistoryItemDto })
   @ApiResponse({
     status: 201,
     description: '대여 기록 생성',
@@ -34,8 +37,13 @@ export class RentalHistoryController {
   async rentItem(
     @Param('userId', ParseIntPipe) userId: number,
     @Param('itemId', ParseIntPipe) itemId: number,
+    @Body() rentalHistoryItemDto: RentalHistoryItemDto,
   ): Promise<RentalHistory> {
-    return this.rentalHistoryService.rentItem(userId, itemId);
+    return this.rentalHistoryService.rentItem(
+      userId,
+      itemId,
+      rentalHistoryItemDto.quantity,
+    );
   }
 
   // 반납 처리
