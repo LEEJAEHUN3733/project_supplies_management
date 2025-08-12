@@ -11,7 +11,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { CreateUserDTO } from './dtos/create-user.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 
 @ApiTags('사용자 관리 API') // Swagger API 명세서에서 사용자 관리 API로 그룹화
@@ -34,8 +34,8 @@ export class UserController {
     status: 400,
     description: '유효하지 않은 요청 데이터입니다.',
   })
-  async create(@Body() createUserDTO: CreateUserDTO): Promise<User> {
-    return this.userService.create(createUserDTO);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.userService.create(createUserDto);
   }
 
   // 전체 사용자 조회

@@ -173,6 +173,10 @@ export class ItemService {
 
   // 특정 유저가 등록한 비품 조회
   async findByUser(userId: number): Promise<Item[]> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('해당 ID의 사용자를 찾을 수 없습니다.');
+    }
     return this.itemRepository.find({
       where: { createdByUserId: userId },
       order: { createdAt: 'DESC' },

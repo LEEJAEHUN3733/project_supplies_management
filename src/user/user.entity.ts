@@ -16,7 +16,7 @@ export class User {
   @Column()
   name: string;
 
-  // 회원탈퇴, 유저정보 삭제 시 기록
+  // 회원탈퇴, 유저정보 삭제 시 기록(소프트 삭제)
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 }

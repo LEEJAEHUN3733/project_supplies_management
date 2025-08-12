@@ -88,12 +88,16 @@ export class ItemController {
   }
 
   // 특정 유저가 등록한 비품 조회
-  @Get('created_by/:userId')
+  @Get('created-by/:userId')
   @ApiOperation({ summary: '특정 유저가 등록한 비품 조회' })
   @ApiResponse({
     status: 200,
     description: '특정 유저가 등록한 비품 목록 반환',
     type: [Item],
+  })
+  @ApiResponse({
+    status: 404,
+    description: '요청한 userId에 해당하는 사용자가 존재하지 않습니다.', // NotFoundException
   })
   async getItemsByUser(
     @Param('userId', ParseIntPipe) userId: number,
@@ -148,6 +152,10 @@ export class ItemController {
 
   // 특정 비품 삭제
   @Delete(':id')
+  @ApiOperation({
+    summary: '비품 삭제',
+    description: '특정 비품의 정보를 삭제합니다.',
+  })
   @ApiResponse({
     status: 200,
     description: '비품이 성공적으로 삭제되었습니다.',
