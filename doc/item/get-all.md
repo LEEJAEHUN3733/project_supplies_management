@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /items`
+`GET /items`
 
 ## 기능 설명 (Description)
 

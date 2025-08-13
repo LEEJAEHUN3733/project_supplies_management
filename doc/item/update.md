@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `PATCH /items/{id}`
+`PATCH /items/{id}`
 
 ## 기능 설명 (Description)
 

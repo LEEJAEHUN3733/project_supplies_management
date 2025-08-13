@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /items/created-by/{userId}
+`GET /items/created-by/{userId}`
 
 ## 기능 설명 (Description)
 

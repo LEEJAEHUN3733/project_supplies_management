@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `PATCH /rental-history/return/{rentId}`
+`PATCH /rental-history/return/{rentId}`
 
 ## 기능 설명 (Description)
 

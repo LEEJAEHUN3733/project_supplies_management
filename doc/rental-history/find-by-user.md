@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /rental-history/users/{userId}`
+`GET /rental-history/users/{userId}`
 
 ## 기능 설명 (Description)
 

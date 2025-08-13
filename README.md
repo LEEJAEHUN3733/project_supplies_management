@@ -1,9 +1,5 @@
 # 비품 관리 시스템 (Supplies Management System)
 
-[![Node.js CI](https://github.com/LEEJAEHUN3733/supplies-management/actions/workflows/node.js.yml/badge.svg)](https://github.com/LEEJAEHUN3733/supplies-management/actions/workflows/node.js.yml)
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-
 이 프로젝트는 NestJS를 기반으로 구축된 비품 관리 RESTful API 서버입니다. 비품(Item), 카테고리(Category)는 물론, 사용자(User) 및 비품 대여/반납 이력(Rental History)을 관리하는 기능을 제공합니다. PostgreSQL 데이터베이스와 연동하며, Redis를 이용한 캐싱 최적화와 Swagger를 통한 API 문서화를 지원합니다.
 
 ## 기술 스택

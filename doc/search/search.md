@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /search/items?name={keyword}&page={page_number}`
+`GET /search/items?name={keyword}&page={page_number}`
 
 ## 기능 설명 (Description)
 

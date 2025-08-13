@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /items/category?categoryId={id}`
+`GET /items/category?categoryId={id}`
 
 ## 기능 설명 (Description)
 

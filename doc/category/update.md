@@ -2,11 +2,11 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `PATCH /category/{id}`
+`PATCH /category/{id}`
 
 ## 기능 설명 (Description)
 
-    URL 경로에 포함된 `id`와 일치하는 카테고리 정보를 수정합니다.
+URL 경로에 포함된 `id`와 일치하는 카테고리 정보를 수정합니다.
 
 ## 흐름도
 

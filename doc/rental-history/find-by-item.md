@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `GET /rental-history/item/{itemId}`
+`GET /rental-history/item/{itemId}`
 
 ## 기능 설명 (Description)
 

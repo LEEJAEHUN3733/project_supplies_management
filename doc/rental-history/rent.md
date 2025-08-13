@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `POST /rental-history/rent/{userId}/{itemId}`
+`POST /rental-history/rent/{userId}/{itemId}`
 
 ## 기능 설명 (Description)
 

@@ -2,7 +2,7 @@
 
 ## 엔드포인트 (Endpoint)
 
-    `POST /items`
+`POST /items`
 
 ## 기능 설명 (Description)
 
